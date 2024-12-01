@@ -10,7 +10,7 @@ namespace SearchSphere.API.Service
         {
             var data = new DocumentMetadata
             {
-                Name = blobUrl,
+                Name = fileName,
                 Url = blobUrl,
                 OID = oid,
                 UUID = Guid.NewGuid().ToString()

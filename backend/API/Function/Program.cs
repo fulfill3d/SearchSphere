@@ -22,17 +22,16 @@ configuration.AddAzureAppConfiguration(config =>
 // Register services
 services.RegisterServices(options =>
 {
-    options.EndpointUri = builder.Configuration["CosmosDbEndpointUri"] ?? string.Empty;
-    options.PrimaryKey = builder.Configuration["CosmosDbPrimaryKey"] ?? string.Empty;
-    options.DatabaseId = builder.Configuration["CosmosDbDatabaseId"] ?? string.Empty;
-    options.ContainerId = builder.Configuration["CosmosDbContainerId"] ?? string.Empty;
+    options.EndpointUri = builder.Configuration["Fulfill3dCosmosEndpointUri"] ?? string.Empty;
+    options.PrimaryKey = builder.Configuration["Fulfill3dCosmosPrimaryKey"] ?? string.Empty;
+    options.DatabaseId = builder.Configuration["SearchSphere_CosmosDbDatabaseId"] ?? string.Empty;
+    options.ContainerId = builder.Configuration["SearchSphere_CosmosDbContainerId"] ?? string.Empty;
 }, options =>
 {
-    options.ConnectionString = builder.Configuration["ConnectionString"] ?? string.Empty;
-    options.StorageUrl = builder.Configuration["StorageUrl"] ?? string.Empty;
+    options.ConnectionString = builder.Configuration["BlobConnectionString"] ?? string.Empty;
 }, options =>
 {
-    options.BlobContainerName = builder.Configuration["BlobContainerName"] ?? string.Empty;
+    options.BlobContainerName = builder.Configuration["SearchSphere_BlobContainerName"] ?? string.Empty;
 });
 
 // Build and run the application
