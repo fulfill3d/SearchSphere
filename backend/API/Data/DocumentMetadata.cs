@@ -8,5 +8,6 @@ namespace SearchSphere.API.Data
         [JsonProperty("name")] public string Name { get; set; }
         [JsonProperty("oid")] public string OID { get; set; }
         [JsonProperty("url")] public string Url { get; set; }
+        [JsonProperty("partitionKey")] public string PartitionKey { get; set; }
     }
 }
