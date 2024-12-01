@@ -1,0 +1,9 @@
+numpy
+python-dotenv
+faiss-cpu
+azure-core
+azure-identity
+azure-servicebus
+azure-appconfiguration
+azure-keyvault-secrets
+sentence-transformers
