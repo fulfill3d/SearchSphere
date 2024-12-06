@@ -28,6 +28,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SearchSphere.Functions.Back
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SearchSphere.Functions.BackgroundTask.Service", "Functions\BackgroundTask\Service\SearchSphere.Functions.BackgroundTask.Service.csproj", "{16445DAD-AE04-4856-A5A6-176A4F4DE53F}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SearchSphere.Integrations.DocumentIntelligenceClient", "Integrations\DocumentIntelligenceClient\SearchSphere.Integrations.DocumentIntelligenceClient.csproj", "{3656D6EE-E0C3-4198-A91F-DB644788423A}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -44,6 +46,7 @@ Global
 		{C55E12DD-59D8-4959-93F9-BFEAA0D2EAFE} = {B3262461-8733-4872-92F8-FDC76FA9C20C}
 		{C9C7BF65-D9B8-4FD0-88BF-5EB53096F7A1} = {B3262461-8733-4872-92F8-FDC76FA9C20C}
 		{16445DAD-AE04-4856-A5A6-176A4F4DE53F} = {B3262461-8733-4872-92F8-FDC76FA9C20C}
+		{3656D6EE-E0C3-4198-A91F-DB644788423A} = {106C985F-A4E3-4F35-BA16-F2570D5960D6}
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{C6515C26-1CFF-4B86-B83F-AF76062C81B7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
@@ -82,5 +85,9 @@ Global
 		{16445DAD-AE04-4856-A5A6-176A4F4DE53F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{16445DAD-AE04-4856-A5A6-176A4F4DE53F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{16445DAD-AE04-4856-A5A6-176A4F4DE53F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3656D6EE-E0C3-4198-A91F-DB644788423A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3656D6EE-E0C3-4198-A91F-DB644788423A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3656D6EE-E0C3-4198-A91F-DB644788423A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3656D6EE-E0C3-4198-A91F-DB644788423A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

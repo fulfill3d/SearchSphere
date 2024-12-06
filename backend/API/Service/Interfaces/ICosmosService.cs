@@ -4,6 +4,6 @@ namespace SearchSphere.API.Service.Interfaces
 {
     public interface ICosmosService
     {
-        Task<bool> SaveDocumentMetadata(string oid, string blobUrl, string fileName);
+        Task<bool> SaveDocumentMetadata(DocumentMetadata metadata);
     }
 }

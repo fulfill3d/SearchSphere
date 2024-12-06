@@ -15,7 +15,7 @@ namespace SearchSphere.API.Service
         {
             var blob = new Blob
             {
-                Name = filePart.FileName,
+                Name = Guid.NewGuid().ToString(),
                 Type = ContentType.PDF,
                 Container = options.BlobContainerName,
                 Stream = filePart.Data,

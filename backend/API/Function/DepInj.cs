@@ -15,7 +15,8 @@ namespace SearchSphere.API
         public static void RegisterServices(
             this IServiceCollection services, 
             Action<CosmosDbClientOptions> configureCosmos, 
-            Action<BlobClientConfiguration> configureBlob, Action<BlobServiceOptions> configureOpt)
+            Action<BlobClientConfiguration> configureBlob, 
+            Action<BlobServiceOptions> configureOpt)
         {
             //
             services.ConfigureServiceOptions<BlobServiceOptions>((_, options) => configureOpt(options));

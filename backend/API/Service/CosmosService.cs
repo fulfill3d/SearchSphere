@@ -7,17 +7,9 @@ namespace SearchSphere.API.Service
     public class CosmosService(ICosmosDbClient cosmosClient): ICosmosService
     {
         private const string PartitionKey = "document-metadata";
-        public async Task<bool> SaveDocumentMetadata(string oid, string blobUrl, string fileName)
+        public async Task<bool> SaveDocumentMetadata(DocumentMetadata metadata)
         {
-            var data = new DocumentMetadata
-            {
-                Name = fileName,
-                Url = blobUrl,
-                OID = oid,
-                UUID = Guid.NewGuid().ToString(),
-                PartitionKey = PartitionKey
-            };
-            await cosmosClient.AddItemAsync(data, PartitionKey);
+            await cosmosClient.AddItemAsync(metadata, PartitionKey);
             return true;
         }
     }

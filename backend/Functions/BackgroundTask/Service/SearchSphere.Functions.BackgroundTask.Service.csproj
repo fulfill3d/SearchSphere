@@ -6,4 +6,10 @@
         <Nullable>enable</Nullable>
     </PropertyGroup>
 
+    <ItemGroup>
+      <ProjectReference Include="..\..\..\Integrations\CosmosDbClient\SearchSphere.Integrations.CosmosDbClient.csproj" />
+      <ProjectReference Include="..\..\..\Integrations\DocumentIntelligenceClient\SearchSphere.Integrations.DocumentIntelligenceClient.csproj" />
+      <ProjectReference Include="..\Data\SearchSphere.Functions.BackgroundTask.Data.csproj" />
+    </ItemGroup>
+
 </Project>

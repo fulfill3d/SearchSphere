@@ -1,17 +1,16 @@
 using Microsoft.Azure.Functions.Worker;
+using SearchSphere.Functions.BackgroundTask.Service.Interfaces;
 
 namespace SearchSphere.Functions.BackgroundTask
 {
-    public class Function
+    public class Function(IExtractTextService extractTextService)
     {
         // Process document immediately after uploading into the storage
         [Function(nameof(BlobFunction))]
         public async Task BlobFunction(
-            [BlobTrigger("template-container/{name}")] Stream myTriggerItem,
-            string name,
-            FunctionContext context)
+            [BlobTrigger("search-sphere/{blobName}")] Stream fileStream, string blobName)
         {
-            // await templateService.TemplateServiceMethod();
+            await extractTextService.ExtractText(blobName, fileStream);
         }
     }
 }
