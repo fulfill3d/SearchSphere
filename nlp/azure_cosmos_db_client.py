@@ -62,9 +62,21 @@ class AzureCosmosDbClient:
             logging.error(f"Failed to retrieve document with ID '{document_id}': {e}")
             return None
 
-    def close(self):
-        """Close the Cosmos DB Client."""
-        logging.info("Azure Cosmos DB Client cleanup handled by garbage collection.")
+    def get_text_fragments_by_blob_name(self, blob_name: str) -> [str]:
+        """
+        Retrieve content fragments for a given blob name.
+
+        :param blob_name: The blob name to filter documents.
+        :return: List of content fragments.
+        """
+        # Query documents
+        query = 'SELECT c["content-fragment"] FROM c WHERE c["blob-name"] = @blobName'
+        parameters = [{"name": "@blobName", "value": blob_name}]
+        documents = self.query_documents(query, parameters)
+
+        # Extract content fragments
+        content_fragments = [doc["content-fragment"] for doc in documents if "content-fragment" in doc]
+        return content_fragments
 
 
 if __name__ == "__main__":
@@ -86,7 +98,7 @@ if __name__ == "__main__":
     )
 
     # Query documents
-    query = "SELECT * FROM c WHERE c.partitionKey = @partitionKey"
+    query = "SELECT * FROM c WHERE c.blob-name = @partitionKey"
     parameters = [{"name": "@partitionKey", "value": "text-content"}]
     documents = cosmos_client.query_documents(query, parameters)
     print("Documents:", documents)
@@ -94,3 +106,8 @@ if __name__ == "__main__":
     # Get a specific document by ID
     document = cosmos_client.get_document_by_id(document_id="12345", partition_key="text-content")
     print("Document:", document)
+
+    # Get content fragments by blob name
+    blob_name = "b3111a7e-cfa1-49d0-b34e-22ea227dec11"
+    content_fragments = cosmos_client.get_text_fragments_by_blob_name(blob_name)
+    print("Content fragments for blob '{}': {}".format(blob_name, content_fragments))
