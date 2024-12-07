@@ -7,6 +7,7 @@ ENV APP_HOME=/app
 
 # Set the working directory
 WORKDIR $APP_HOME
+
 # Copy only the requirements file to the container
 COPY requirements.txt .
 
@@ -16,5 +17,8 @@ RUN pip install --upgrade pip && pip install --no-cache-dir -r requirements.txt
 # Copy the rest of the application code
 COPY . .
 
-# Set the default command to run your application
-CMD ["python", "main.py"]
+# Expose the application port
+EXPOSE 8000
+
+# Set the default command to run the FastAPI application with Uvicorn
+CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000"]

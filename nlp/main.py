@@ -1,31 +1,65 @@
+from fastapi import FastAPI, HTTPException
+from pydantic import BaseModel
 import os
-
-from azure.servicebus import ServiceBusClient
+from typing import List
+import numpy as np
 from azure_app_config_client import AppConfigClient
+from azure_cosmos_db_client import AzureCosmosDbClient
 from semantic_search_service import SemanticSearchService
-
 from dotenv import load_dotenv
 
 # Load environment variables
 load_dotenv()
 
+app = FastAPI()
 
-def main():
-    # Fetch configuration settings from Azure App Configuration
-    config_client = AppConfigClient(os.getenv('APP_CONFIG_URL'))
+# Initialize dependencies
+config_client = AppConfigClient(os.getenv("APP_CONFIG_URL"))
 
-    service_bus_connection_str = config_client.fetch_configuration_value("ServiceBusConnectionString")
-    queue_name = config_client.fetch_configuration_value("SS_QueueName")
+cosmos_db_client = AzureCosmosDbClient(
+    endpoint=config_client.fetch_configuration_value("Fulfill3dCosmosEndpointUri"),
+    key=config_client.fetch_configuration_value("Fulfill3dCosmosPrimaryKey"),
+    database_name=config_client.fetch_configuration_value("SearchSphere_CosmosDbDatabaseId"),
+    container_name=config_client.fetch_configuration_value("SearchSphere_CosmosDbContainerId")
+)
 
-    search_service = SemanticSearchService()
-
-    # Initialize Azure Service Bus Client
-    with ServiceBusClient.from_connection_string(conn_str=service_bus_connection_str) as client:
-        with client.get_queue_receiver(queue_name=queue_name) as receiver:
-            for message in receiver:
-                search_service.set_message(message)
+search_service = SemanticSearchService(cosmos_db_client)
 
 
-if __name__ == "__main__":
-    while True:
-        main()
+class SearchRequest(BaseModel):
+    blob_name: str
+    question: str
+
+
+class SearchResponse(BaseModel):
+    text: str
+    distance: float
+
+
+@app.post("/search", response_model=list[SearchResponse])
+async def perform_semantic_search(request: SearchRequest):
+    """
+    Perform semantic search based on the provided blob_name and question.
+
+    :param request: Request body containing blob_name and question.
+    :return: List of search results.
+    """
+    try:
+        # Process the message and perform semantic search
+        results = search_service.process_message(request.dict())
+        return [
+            SearchResponse(text=result["text"], distance=result["distance"])
+            for result in results
+        ]
+    except ValueError as ve:
+        raise HTTPException(status_code=400, detail=str(ve))
+    except Exception as e:
+        raise HTTPException(status_code=500, detail="An error occurred during processing")
+
+
+@app.get("/")
+async def root():
+    """
+    Root endpoint to confirm the service is running.
+    """
+    return {"message": "Semantic Search Service is running"}
