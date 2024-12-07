@@ -4,6 +4,6 @@ namespace SearchSphere.Functions.BackgroundTask.Service.Interfaces
 {
     public interface ICosmosService
     {
-        Task<bool> SaveTextContent(TextContent content);
+        Task<bool> SaveTextContent(TextContentFragment contentFragment);
     }
 }
