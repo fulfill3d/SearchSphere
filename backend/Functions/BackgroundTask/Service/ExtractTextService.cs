@@ -6,7 +6,7 @@ using SearchSphere.Functions.BackgroundTask.Service.Options;
 namespace SearchSphere.Functions.BackgroundTask.Service
 {
     public class ExtractTextService(
-        IDocumentIntelligenceService documentIntelligenceService, 
+        IDocumentIntelligenceService documentIntelligenceService,
         ICosmosService cosmosService,
         IAzureOpenAiService azureOpenAiService,
         IOptions<SlidingWindowOptions> opt): IExtractTextService
@@ -25,18 +25,15 @@ namespace SearchSphere.Functions.BackgroundTask.Service
 
             var embeddings = await azureOpenAiService.GetEmbeddings(fragments);
 
-            // Save each fragment to Cosmos DB
-            var tasks = embeddings.Select(embedding =>
+            // Save each fragment and its embedding to Cosmos DB
+            var tasks = fragments.Zip(embeddings, (fragment, embedding) => new TextContentFragment
             {
-                var contentFragment = new TextContentFragment
-                {
-                    UUID = Guid.NewGuid().ToString(),
-                    BlobName = blobName,
-                    Embedding = embedding,
-                    PartitionKey = PartitionKey
-                };
-                return cosmosService.SaveTextContent(contentFragment);
-            });
+                UUID = Guid.NewGuid().ToString(),
+                BlobName = blobName,
+                Embedding = embedding,
+                TextChunk = fragment,
+                PartitionKey = PartitionKey
+            }).Select(contentFragment => cosmosService.SaveTextContent(contentFragment));
 
             // Wait for all tasks to complete
             await Task.WhenAll(tasks);
