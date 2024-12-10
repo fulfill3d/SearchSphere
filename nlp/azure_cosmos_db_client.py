@@ -64,7 +64,7 @@ class AzureCosmosDbClient:
             logging.error(f"Failed to retrieve document with ID '{document_id}': {e}")
             return None
 
-    def get_embeddings_by_blob_name(self, blob_name: str) -> List[float]:
+    def get_documents_by_blob_name(self, blob_name: str) -> List[dict]:
         """
         Retrieve content fragments for a given blob name.
 
@@ -72,13 +72,11 @@ class AzureCosmosDbClient:
         :return: List of content fragments.
         """
         # Query documents
-        query = 'SELECT c["content-fragment"] FROM c WHERE c["blob-name"] = @blobName'
+        query = 'SELECT c["embedding"], c["text-chunk"] FROM c WHERE c["blob-name"] = @blobName'
         parameters = [{"name": "@blobName", "value": blob_name}]
         documents = self.query_documents(query, parameters)
 
-        # Extract content fragments
-        embeddings = [doc["embedding"] for doc in documents if "embedding" in doc]
-        return embeddings
+        return documents
 
 
 if __name__ == "__main__":
@@ -100,7 +98,7 @@ if __name__ == "__main__":
     )
 
     # Query documents
-    query = "SELECT * FROM c WHERE c.blob-name = @partitionKey"
+    query = "SELECT * FROM c WHERE c.partitionKey = @partitionKey"
     parameters = [{"name": "@partitionKey", "value": "text-content"}]
     documents = cosmos_client.query_documents(query, parameters)
     print("Documents:", documents)
@@ -110,6 +108,6 @@ if __name__ == "__main__":
     print("Document:", document)
 
     # Get content fragments by blob name
-    blob_name = "b3111a7e-cfa1-49d0-b34e-22ea227dec11"
-    content_fragments = cosmos_client.get_embeddings_by_blob_name(blob_name)
-    print("Content fragments for blob '{}': {}".format(blob_name, content_fragments))
+    blob_name = "a12ba5a0-2b64-401e-8c9f-373fcc4427f9"
+    documents = cosmos_client.get_documents_by_blob_name(blob_name)
+    print("Content fragments for blob '{}': {}".format(blob_name, documents))
