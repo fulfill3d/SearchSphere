@@ -1,5 +1,7 @@
 import logging
 import os
+from typing import List
+
 from azure.cosmos import CosmosClient, exceptions
 from azure_app_config_client import AppConfigClient
 
@@ -62,7 +64,7 @@ class AzureCosmosDbClient:
             logging.error(f"Failed to retrieve document with ID '{document_id}': {e}")
             return None
 
-    def get_text_fragments_by_blob_name(self, blob_name: str) -> [str]:
+    def get_embeddings_by_blob_name(self, blob_name: str) -> List[float]:
         """
         Retrieve content fragments for a given blob name.
 
@@ -75,8 +77,8 @@ class AzureCosmosDbClient:
         documents = self.query_documents(query, parameters)
 
         # Extract content fragments
-        content_fragments = [doc["content-fragment"] for doc in documents if "content-fragment" in doc]
-        return content_fragments
+        embeddings = [doc["embedding"] for doc in documents if "embedding" in doc]
+        return embeddings
 
 
 if __name__ == "__main__":
@@ -109,5 +111,5 @@ if __name__ == "__main__":
 
     # Get content fragments by blob name
     blob_name = "b3111a7e-cfa1-49d0-b34e-22ea227dec11"
-    content_fragments = cosmos_client.get_text_fragments_by_blob_name(blob_name)
+    content_fragments = cosmos_client.get_embeddings_by_blob_name(blob_name)
     print("Content fragments for blob '{}': {}".format(blob_name, content_fragments))

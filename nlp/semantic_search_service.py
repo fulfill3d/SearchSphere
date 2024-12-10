@@ -4,7 +4,6 @@ import os
 from typing import Dict, List
 
 import faiss
-from sentence_transformers import SentenceTransformer
 
 from azure_app_config_client import AppConfigClient
 from azure_cosmos_db_client import AzureCosmosDbClient
@@ -13,23 +12,18 @@ from azure_cosmos_db_client import AzureCosmosDbClient
 class SemanticSearchService:
     def __init__(self, cosmos_client: AzureCosmosDbClient):
         self.cosmos_client = cosmos_client  # Initialize Cosmos DB client
-        self.model = SentenceTransformer('all-MiniLM-L6-v2')  # Pre-trained model
-        self.index = faiss.IndexFlatL2(384)  # FAISS index with vector dimension 384
-        self.data_store = []  # Store the texts corresponding to the embeddings
+        self.index = faiss.IndexFlatL2(768)  # FAISS index with vector dimension 768
 
-    def add_texts(self, texts: List[str]):
-        if not texts:
-            raise ValueError("Text list cannot be empty.")
-        embeddings = self.model.encode(texts)
+    def add_texts(self, embeddings: List[float]):
+        if not embeddings:
+            raise ValueError("Embeddings list cannot be empty.")
         embeddings = np.array(embeddings).astype('float32')  # Convert to float32 for FAISS
         self.index.add(embeddings)  # Add embeddings to FAISS
-        self.data_store.extend(texts)  # Update the data store
 
-    def search(self, query: str, k: int = 3):
+    def search(self, query_vector: List[float], k: int = 3):
         if not self.data_store:
-            raise ValueError("The index is empty. Add texts before searching.")
-        query_embedding = self.model.encode([query])
-        query_embedding = np.array(query_embedding).astype('float32')
+            raise ValueError("The index is empty. Add vectors before searching.")
+        query_embedding = np.array([query_vector]).astype('float32')
         distances, indices = self.index.search(query_embedding, k)
         results = [
             {"text": self.data_store[i], "distance": float(distances[0][j])}
@@ -53,15 +47,15 @@ class SemanticSearchService:
 
         # Retrieve content fragments from Cosmos DB
         logging.info(f"Retrieving content fragments for blob_name: {blob_name}")
-        content_fragments = self.cosmos_client.get_text_fragments_by_blob_name(blob_name)
+        embeddings = self.cosmos_client.get_embeddings_by_blob_name(blob_name)
 
-        if not content_fragments:
+        if not embeddings:
             raise ValueError(f"No content fragments found for blob_name: {blob_name}")
 
-        logging.info(f"Retrieved {len(content_fragments)} content fragments for blob_name: {blob_name}")
+        logging.info(f"Retrieved {len(embeddings)} content fragments for blob_name: {blob_name}")
 
         # Add fragments to the FAISS index
-        self.add_texts(content_fragments)
+        self.add_texts(embeddings)
         logging.info("Content fragments added to the FAISS index.")
 
         # Perform semantic search
