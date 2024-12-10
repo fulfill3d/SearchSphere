@@ -21,14 +21,23 @@ configuration.AddAzureAppConfiguration(config =>
 
 services.RegisterServices(options =>
 {
-    options.EndpointUri = builder.Configuration["Fulfill3dCosmosEndpointUri"] ?? string.Empty;
-    options.PrimaryKey = builder.Configuration["Fulfill3dCosmosPrimaryKey"] ?? string.Empty;
-    options.DatabaseId = builder.Configuration["SearchSphere_CosmosDbDatabaseId"] ?? string.Empty;
-    options.ContainerId = builder.Configuration["SearchSphere_CosmosDbContainerId"] ?? string.Empty;
+    options.EndpointUri = configuration["Fulfill3dCosmosEndpointUri"] ?? string.Empty;
+    options.PrimaryKey = configuration["Fulfill3dCosmosPrimaryKey"] ?? string.Empty;
+    options.DatabaseId = configuration["SearchSphere_CosmosDbDatabaseId"] ?? string.Empty;
+    options.ContainerId = configuration["SearchSphere_CosmosDbContainerId"] ?? string.Empty;
 },conf =>
 {
-    conf.Endpoint = builder.Configuration["SearchSphere_DocumentIntelligenceEndpoint"] ?? string.Empty;
-    conf.ApiKey = builder.Configuration["SearchSphere_DocumentIntelligenceApiKey"] ?? string.Empty;
+    conf.Endpoint = configuration["SearchSphere_DocumentIntelligenceEndpoint"] ?? string.Empty;
+    conf.ApiKey = configuration["SearchSphere_DocumentIntelligenceApiKey"] ?? string.Empty;
+},conf =>
+{
+    conf.Endpoint = configuration["SearchSphere_AzureOpenAiEndpoint"] ?? string.Empty;
+    conf.ApiKey = configuration["SearchSphere_AzureOpenAiApiKey"] ?? string.Empty;
+    conf.DeploymentName = configuration["SearchSphere_AzureOpenAiDeploymentName"] ?? string.Empty;
+},conf =>
+{
+    conf.WindowSize = int.Parse(configuration["SearchSphere_SlidingWindowSize"] ?? string.Empty);
+    conf.StepSize = int.Parse(configuration["SearchSphere_SlidingStepSize"] ?? string.Empty);
 });
 
 builder.Build().Run();

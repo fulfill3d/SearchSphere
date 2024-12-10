@@ -1,33 +1,38 @@
+using Microsoft.Extensions.Options;
 using SearchSphere.Functions.BackgroundTask.Data;
 using SearchSphere.Functions.BackgroundTask.Service.Interfaces;
-using SearchSphere.Integrations.DocumentIntelligenceClient.Interfaces;
+using SearchSphere.Functions.BackgroundTask.Service.Options;
 
 namespace SearchSphere.Functions.BackgroundTask.Service
 {
     public class ExtractTextService(
-        IDocumentIntelligenceClient documentIntelligenceClient, 
-        ICosmosService cosmosService): IExtractTextService
+        IDocumentIntelligenceService documentIntelligenceService, 
+        ICosmosService cosmosService,
+        IAzureOpenAiService azureOpenAiService,
+        IOptions<SlidingWindowOptions> opt): IExtractTextService
     {
         private const string PartitionKey = "text-content";
-        private const int WindowSize = 400; // Number of characters in each fragment
-        private const int StepSize = 50; // Overlap between fragments
+        private readonly int _windowSize = opt.Value.WindowSize; // Number of characters in each fragment
+        private readonly int _stepSize = opt.Value.StepSize; // Overlap between fragments
 
         public async Task<bool> ExtractText(string blobName, Stream input)
         {
             // Extract the full text
-            var text = await documentIntelligenceClient.ExtractText(input);
+            var text = await documentIntelligenceService.ExtractText(input);
 
             // Sliding window parameters
-            var fragments = GenerateSlidingWindows(text, WindowSize, StepSize);
+            var fragments = GenerateSlidingWindows(text, _windowSize, _stepSize);
+
+            var embeddings = await azureOpenAiService.GetEmbeddings(fragments);
 
             // Save each fragment to Cosmos DB
-            var tasks = fragments.Select(fragment =>
+            var tasks = embeddings.Select(embedding =>
             {
                 var contentFragment = new TextContentFragment
                 {
                     UUID = Guid.NewGuid().ToString(),
                     BlobName = blobName,
-                    ContentFragment = fragment,
+                    Embedding = embedding,
                     PartitionKey = PartitionKey
                 };
                 return cosmosService.SaveTextContent(contentFragment);

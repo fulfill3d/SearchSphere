@@ -6,7 +6,7 @@ namespace SearchSphere.Functions.BackgroundTask.Data
     {
         [JsonProperty("id")] public string UUID { get; set; }
         [JsonProperty("blob-name")] public string BlobName { get; set; }
-        [JsonProperty("content-fragment")] public string ContentFragment { get; set; }
+        [JsonProperty("embedding")] public float[] Embedding { get; set; }
         [JsonProperty("partitionKey")] public string PartitionKey { get; set; }
     }
 }
