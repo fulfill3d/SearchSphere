@@ -45,12 +45,13 @@ namespace SearchSphere.Functions.BackgroundTask.Service
 
         private static List<string> GenerateSlidingWindows(string text, int windowSize, int stepSize)
         {
+            var words = text.Split(' ');
             var fragments = new List<string>();
-            for (var i = 0; i < text.Length; i += stepSize)
+            for (var i = 0; i < words.Length; i += stepSize)
             {
-                var end = Math.Min(i + windowSize, text.Length);
-                fragments.Add(text.Substring(i, end - i));
-                if (end == text.Length)
+                var end = Math.Min(i + windowSize, words.Length);
+                fragments.Add(string.Join(" ", words.Skip(i).Take(end - i)));
+                if (end == words.Length)
                     break;
             }
             return fragments;
