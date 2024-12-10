@@ -5,6 +5,7 @@ from typing import List
 import numpy as np
 from azure_app_config_client import AppConfigClient
 from azure_cosmos_db_client import AzureCosmosDbClient
+from azure_openai_client import AzureOpenAIClient
 from semantic_search_service import SemanticSearchService
 from dotenv import load_dotenv
 
@@ -23,7 +24,23 @@ cosmos_db_client = AzureCosmosDbClient(
     container_name=config_client.fetch_configuration_value("SearchSphere_CosmosDbContainerId")
 )
 
-search_service = SemanticSearchService(cosmos_db_client)
+# Initialize Azure OpenAI Client
+openai_endpoint = config_client.fetch_configuration_value("SearchSphere_AzureOpenAiEndpoint")
+openai_key = config_client.fetch_configuration_value("SearchSphere_AzureOpenAiApiKey")
+openai_deployment_name = config_client.fetch_configuration_value("SearchSphere_AzureOpenAiDeploymentName")
+openai_api_version = "2023-05-15"  # Set the appropriate API version
+
+openai_client = AzureOpenAIClient(
+    endpoint=openai_endpoint,
+    key=openai_key,
+    model=openai_deployment_name,
+    api_version=openai_api_version
+)
+
+search_service = SemanticSearchService(
+    cosmos_client=cosmos_db_client,
+    openai_client=openai_client
+)
 
 
 class SearchRequest(BaseModel):
@@ -32,11 +49,10 @@ class SearchRequest(BaseModel):
 
 
 class SearchResponse(BaseModel):
-    text: str
-    distance: float
+    answer: str
 
 
-@app.post("/search", response_model=list[SearchResponse])
+@app.post("/search", response_model=SearchResponse)
 async def perform_semantic_search(request: SearchRequest):
     """
     Perform semantic search based on the provided blob_name and question.
@@ -46,11 +62,8 @@ async def perform_semantic_search(request: SearchRequest):
     """
     try:
         # Process the message and perform semantic search
-        results = search_service.process_message(request.dict())
-        return [
-            SearchResponse(text=result["text"], distance=result["distance"])
-            for result in results
-        ]
+        answer = search_service.process_message(request.model_dump())
+        return SearchResponse(answer=answer)
     except ValueError as ve:
         raise HTTPException(status_code=400, detail=str(ve))
     except Exception as e:
