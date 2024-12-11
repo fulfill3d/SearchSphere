@@ -2,6 +2,7 @@ using System.Net;
 using HttpMultipartParser;
 using Microsoft.Azure.Functions.Worker;
 using Microsoft.Azure.Functions.Worker.Http;
+using Newtonsoft.Json;
 using SearchSphere.API.Service.Interfaces;
 
 namespace SearchSphere.API
@@ -10,7 +11,7 @@ namespace SearchSphere.API
     {
         [Function(nameof(UploadDocument))]
         public async Task<HttpResponseData> UploadDocument(
-            [HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = "upload-document")]
+            [HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = "")]
             HttpRequestData req)
         {
             var response = req.CreateResponse();
@@ -55,6 +56,19 @@ namespace SearchSphere.API
                 await response.WriteStringAsync($"Error processing file: {ex.Message}");
             }
 
+            return response;
+        }
+
+        [Function(nameof(GetDocuments))]
+        public async Task<HttpResponseData> GetDocuments(
+            [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "{oid}")]
+            HttpRequestData req, string oid)
+        {
+            var response = req.CreateResponse();
+            var result = await fileService.GetFiles(oid);
+            await response.WriteStringAsync(JsonConvert.SerializeObject(result, Formatting.Indented));
+            response.Headers.Add("Content-Type", "application/json");
+            response.StatusCode = HttpStatusCode.OK;
             return response;
         }
     }
