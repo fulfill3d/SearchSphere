@@ -1,4 +1,6 @@
+using FluentValidation;
 using Microsoft.Extensions.DependencyInjection;
+using SearchSphere.Common.Services.Interfaces;
 
 namespace SearchSphere.Common.Services
 {
@@ -12,6 +14,16 @@ namespace SearchSphere.Common.Services
             services
                 .AddOptions<TOptions>()
                 .Configure<IServiceProvider>((options, resolver) => configure(resolver, options));
+        }
+        
+        public static void AddHttpRequestBodyMapper(this IServiceCollection services)
+        {
+            services.AddTransient(typeof(IHttpRequestBodyMapper<>), typeof(HttpRequestBodyMapper<>));
+        }
+        
+        public static void AddFluentValidator<T>(this IServiceCollection services)
+        {
+            services.AddValidatorsFromAssembly(typeof(T).Assembly);
         }
     }
 }

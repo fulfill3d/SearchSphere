@@ -1,4 +1,5 @@
 from fastapi import FastAPI, HTTPException
+from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 import os
 from typing import List
@@ -13,6 +14,15 @@ from dotenv import load_dotenv
 load_dotenv()
 
 app = FastAPI()
+
+# Add CORSMiddleware to your FastAPI app
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["http://localhost:3000"],  # Replace with your frontend's origin
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 # Initialize dependencies
 config_client = AppConfigClient(os.getenv("APP_CONFIG_URL"))
@@ -49,6 +59,8 @@ class SearchRequest(BaseModel):
 
 
 class SearchResponse(BaseModel):
+    blob_name: str
+    question: str
     answer: str
 
 
@@ -63,7 +75,11 @@ async def perform_semantic_search(request: SearchRequest):
     try:
         # Process the message and perform semantic search
         answer = search_service.process_message(request.model_dump())
-        return SearchResponse(answer=answer)
+        return SearchResponse(
+            blob_name=request.blob_name,
+            question=request.question,
+            answer=answer
+        )
     except ValueError as ve:
         raise HTTPException(status_code=400, detail=str(ve))
     except Exception as e:

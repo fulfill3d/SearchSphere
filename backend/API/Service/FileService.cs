@@ -21,6 +21,11 @@ namespace SearchSphere.API.Service
             return await cosmosService.SaveDocumentMetadata(metadata);
         }
 
+        public async Task<IEnumerable<DocumentMetadata>> GetFiles(string oid)
+        {
+            return await cosmosService.GetDocumentMetadata(oid);
+        }
+
         private static string GetBlobNameFromUrl(string url)
         {
             if (string.IsNullOrWhiteSpace(url))
