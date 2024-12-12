@@ -10,7 +10,7 @@ steps:
   - task: AzureCLI@2
     displayName: Deploy Docker Image to ACI
     inputs:
-      connectedServiceNameARM: ${{ parameters.acrName }}_connection
+      connectedServiceNameARM: 'fulfill3d-subscription-alpha'
       scriptType: bash
       scriptLocation: inlineScript
       inlineScript: |
