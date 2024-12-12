@@ -1,0 +1,20 @@
+trigger: none
+pr: none
+
+pool:
+  vmImage: 'windows-latest'
+
+variables:
+  ciPipeline: 'ci-functions-background-task-main'
+  functionAppName: 'search-sphere-functions-background-task-alpha'
+  packageName: 'BackgroundTask'
+  project: 'SearchSphere'
+
+resources:
+  pipelines:
+    - pipeline: ciFunctionsBackgroundTaskMain
+      source: 'ci-functions-background-task-main'
+      trigger: true
+
+steps:
+  - template: ../../../../../devops/cd-azure-function-template.yml

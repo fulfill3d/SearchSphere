@@ -11,8 +11,12 @@ WORKDIR $APP_HOME
 # Copy only the requirements file to the container
 COPY requirements.txt .
 
-# Upgrade pip and install Python dependencies
-RUN pip install --upgrade pip && pip install --no-cache-dir -r requirements.txt
+# Upgrade pip and install dependencies without cache
+RUN pip install --upgrade pip && \
+    pip install --no-cache-dir -r requirements.txt && \
+    apt-get purge -y --auto-remove && \
+    rm -rf /var/lib/apt/lists/*
+
 
 # Copy the rest of the application code
 COPY . .

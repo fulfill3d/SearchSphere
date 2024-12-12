@@ -1,0 +1,20 @@
+trigger:
+  branches:
+    include:
+      - main
+  paths:
+    include:
+      - 'nlp/*'
+
+variables:
+  acrName: 'fulfill3dcontainerregistry'
+  imageName: 'search-sphere-inference'
+  projectPath: 'nlp/'
+
+steps:
+  - template: ../devops/ci-docker-template.yml
+    parameters:
+      vmImage: 'ubuntu-latest'
+      acrName: $(acrName)
+      imageName: $(imageName)
+      projectPath: $(projectPath)

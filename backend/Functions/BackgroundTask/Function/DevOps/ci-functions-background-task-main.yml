@@ -1,0 +1,19 @@
+trigger:
+  branches:
+    include:
+      - main
+  paths:
+    include:
+      - 'backend/Functions/BackgroundTask/*'
+      - 'backend/Common/Service/*'
+      - 'backend/Integrations/AzureOpenAiClient/*'
+      - 'backend/Integrations/CosmosDbClient/*'
+      - 'backend/Integrations/DocumentIntelligenceClient/*'
+
+variables:
+  vmImageName: 'windows-latest'
+  workingDirectory: '$(System.DefaultWorkingDirectory)/backend/Functions/BackgroundTask/Function'
+  packageName: 'BackgroundTask'
+
+steps:
+  - template: ../../../../../devops/ci-azure-function-template.yml

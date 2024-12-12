@@ -1,0 +1,23 @@
+trigger: none
+pr: none
+
+variables:
+  acrName: 'fulfill3dcontainerregistry'
+  imageName: 'search-sphere-inference'
+  resourceGroup: 'fulfill3d-alpha'
+  containerName: 'search-sphere-container'
+
+resources:
+  pipelines:
+    - pipeline: ciPipeline
+      source: 'ci-search-sphere-inference-main'
+      trigger: true
+
+steps:
+  - template: ../devops/cd-docker-template.yml
+    parameters:
+      vmImage: 'ubuntu-latest'
+      acrName: $(acrName)
+      imageName: $(imageName)
+      resourceGroup: $(resourceGroup)
+      containerName: $(containerName)

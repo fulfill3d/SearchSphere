@@ -1,0 +1,24 @@
+parameters:
+  vmImage: 'ubuntu-latest'
+  acrName: ''
+  imageName: ''
+  resourceGroup: ''
+  containerName: ''
+  buildId: $(Build.BuildId)
+
+steps:
+  - task: AzureCLI@2
+    displayName: Deploy Docker Image to ACI
+    inputs:
+      azureSubscription: ${{ parameters.azureSubscription }}
+      scriptType: bash
+      scriptLocation: inlineScript
+      inlineScript: |
+        az container create \
+          --resource-group ${{ parameters.resourceGroup }} \
+          --name ${{ parameters.containerName }} \
+          --image ${{ parameters.acrName }}.azurecr.io/${{ parameters.imageName }}:${{ parameters.buildId }} \
+          --cpu 1 \
+          --memory 1 \
+          --registry-login-server ${{ parameters.acrName }}.azurecr.io \
+          --ports 80
