@@ -21,3 +21,5 @@ steps:
         latest
         ${{ parameters.buildId }}
       containerRegistry: ${{ parameters.acrName }}_connection
+      arguments: |
+        --build-arg APP_CONFIG_URL=$(APP_CONFIG_URL)
