@@ -1,0 +1,18 @@
+trigger:
+  branches:
+    include:
+      - main
+  paths:
+    include:
+      - 'backend/API/*'
+      - 'backend/Common/Service/*'
+      - 'backend/Integrations/BlobClient/*'
+      - 'backend/Integrations/CosmosDbClient/*'
+
+variables:
+  vmImageName: 'windows-latest'
+  workingDirectory: '$(System.DefaultWorkingDirectory)/backend/API/Function'
+  packageName: 'Api'
+
+steps:
+  - template: ../../../../devops/ci-azure-function-template.yml

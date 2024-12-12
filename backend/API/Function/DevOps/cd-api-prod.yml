@@ -1,0 +1,20 @@
+trigger: none
+pr: none
+
+pool:
+  vmImage: 'windows-latest'
+
+variables:
+  ciPipeline: 'ci-api-main'
+  functionAppName: 'search-sphere-api-alpha'
+  packageName: 'Api'
+  project: 'SearchSphere'
+
+resources:
+  pipelines:
+    - pipeline: ciApiMain
+      source: 'ci-api-main'
+      trigger: true
+
+steps:
+  - template: ../../../../devops/cd-azure-function-template.yml
