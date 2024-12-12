@@ -6,7 +6,7 @@ parameters:
   buildId: $(Build.BuildId)
 
 steps:
-  - task: UsePythonVersion@1
+  - task: UsePythonVersion@0
     inputs:
       versionSpec: '3.x'
       addToPath: true
