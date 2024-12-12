@@ -25,7 +25,7 @@ class SemanticSearchService:
             "question-answering",
             model="bert-base-uncased",
             tokenizer="bert-base-uncased",
-            device=0)
+            device=-1)
 
     def add_texts(self, documents: List[dict]):
         if not documents:
