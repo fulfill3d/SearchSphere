@@ -8,7 +8,7 @@ trigger:
 
 variables:
   acrName: 'fulfill3dcontainerregistry'
-  imageName: 'search-sphere-inference'
+  imageName: 'search-sphere'
   projectPath: 'nlp/'
 
 steps:

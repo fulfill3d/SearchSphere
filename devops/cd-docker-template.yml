@@ -15,10 +15,12 @@ steps:
       scriptLocation: inlineScript
       inlineScript: |
         az container create \
-          --resource-group ${{ parameters.resourceGroup }} \
-          --name ${{ parameters.containerName }} \
-          --image ${{ parameters.acrName }}.azurecr.io/${{ parameters.imageName }}:${{ parameters.buildId }} \
+          --resource-group $(resourceGroup) \
+          --name $(containerName) \
+          --image $(acrName).azurecr.io/$(imageName):latest \
           --cpu 1 \
           --memory 1 \
-          --registry-login-server ${{ parameters.acrName }}.azurecr.io \
+          --registry-login-server $(acrName).azurecr.io \
+          --registry-username $(ACR_USERNAME) \
+          --registry-password $(ACR_PASSWORD) \
           --ports 80

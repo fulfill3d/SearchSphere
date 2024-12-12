@@ -3,7 +3,7 @@ pr: none
 
 variables:
   acrName: 'fulfill3dcontainerregistry'
-  imageName: 'search-sphere-inference'
+  imageName: 'search-sphere'
   resourceGroup: 'fulfill3d-alpha'
   containerName: 'search-sphere-container'
 
