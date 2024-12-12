@@ -1,0 +1,23 @@
+parameters:
+  vmImage: 'ubuntu-latest'
+  acrName: ''
+  imageName: ''
+  projectPath: '.'
+  buildId: $(Build.BuildId)
+
+steps:
+  - task: UsePythonVersion@1
+    inputs:
+      versionSpec: '3.x'
+      addToPath: true
+
+  - task: Docker@2
+    displayName: Build and Push Docker Image
+    inputs:
+      command: buildAndPush
+      repository: ${{ parameters.acrName }}.azurecr.io/${{ parameters.imageName }}
+      dockerfile: ${{ parameters.projectPath }}/Dockerfile
+      tags: |
+        latest
+        ${{ parameters.buildId }}
+      containerRegistry: ${{ parameters.acrName }}_connection
